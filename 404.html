@@ -5,25 +5,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ghostland Donations</title>
 <style>
-:root{--bg:#fff;--text:#111;--card:#f3f3f3}
-@media(prefers-color-scheme:dark){:root{--bg:#0d0d0d;--text:#f5f5f5;--card:#1a1a1a}}
-body.dark{--bg:#0d0d0d;--text:#f5f5f5;--card:#1a1a1a}
-body.light{--bg:#fff;--text:#111;--card:#f3f3f3}
-body{margin:0;font-family:sans-serif;background:var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;height:100vh}
-.box{background:var(--card);padding:30px;border-radius:12px;text-align:center;max-width:420px}
-button{margin-top:15px;padding:8px 14px;border:none;border-radius:6px;background:var(--text);color:var(--bg);cursor:pointer}
+:root{--bg:#ffffff;--text:#111;--card:#f5f5f5}
+@media(prefers-color-scheme:dark){:root{--bg:#0d0d0d;--text:#f5f5f5;--card:#181818}}
+body.dark{--bg:#0d0d0d;--text:#f5f5f5;--card:#181818}
+body.light{--bg:#ffffff;--text:#111;--card:#f5f5f5}
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:system-ui,-apple-system,sans-serif;
+background:var(--bg);
+color:var(--text);
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+padding:16px;
+}
+.card{
+width:100%;
+max-width:520px;
+background:var(--card);
+padding:26px;
+border-radius:16px;
+text-align:center;
+}
+h1{margin:0 0 10px;font-size:1.5rem}
+p{margin:6px 0;opacity:.85}
+.controls{
+margin-top:16px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+}
+select,button{
+padding:10px;
+border-radius:8px;
+border:none;
+font-size:.9rem;
+}
+button{background:var(--text);color:var(--bg);cursor:pointer}
 </style>
 </head>
 <body>
-<div class="box">
-<h1>Donations Unavailable</h1>
-<p>Our payment system is currently under maintenance as we deploy a new system.</p>
-<p>Please come back in a few hours.</p>
-<button onclick="t()">Toggle theme</button>
+<div class="card">
+<h1 id="title"></h1>
+<p id="line1"></p>
+<p id="line2"></p>
+
+<div class="controls">
+<select id="lang" onchange="setLang(this.value)"></select>
+<button onclick="toggleTheme()">Theme</button>
 </div>
+</div>
+
 <script>
-function t(){
-let b=document.body
-b.classList.toggle('dark')
-b.classList.toggle('light')}
-</script></body></html>
+const t={
+en:["Donations Unavailable","Our payment system is currently under maintenance as we deploy a new system.","Please come back in a few hours."],
+fr:["Dons indisponibles","Le système de paiement est en maintenance pour déployer une nouvelle version.","Veuillez revenir dans quelques heures."],
+es:["Donaciones no disponibles","El sistema de pago está en mantenimiento mientras desplegamos uno nuevo.","Vuelve en unas horas."],
+de:["Spenden nicht verfügbar","Das Zahlungssystem wird gewartet, während ein neues System bereitgestellt wird.","Bitte in ein paar Stunden wiederkommen."],
+ru:["Пожертвования недоступны","Платежная система на обслуживании, мы внедряем новую версию.","Пожалуйста, зайдите через несколько часов."],
+ja:["寄付は現在利用できません","新しいシステム導入のため決済はメンテナンス中です。","数時間後に再度お試しください。"],
+pt:["Doações indisponíveis","O sistema de pagamento está em manutenção enquanto implantamos um novo.","Volte em algumas horas."],
+pl:["Darowizny niedostępne","System płatności jest w trakcie konserwacji, wdrażamy nowy system.","Wróć za kilka godzin."],
+zh:["暂时无法捐赠","支付系统正在维护，我们正在部署新系统。","请稍后再试。"],
+it:["Donazioni non disponibili","Il sistema di pagamento è in manutenzione mentre implementiamo uno nuovo.","Torna tra qualche ora."],
+nl:["Donaties niet beschikbaar","Het betalingssysteem is in onderhoud terwijl we een nieuw systeem uitrollen.","Kom over een paar uur terug."],
+tr:["Bağışlar kullanılamıyor","Yeni bir sistem kurarken ödeme sistemi bakımda.","Birkaç saat sonra tekrar gelin."],
+ko:["후원 이용 불가","새 시스템 도입을 위해 결제 시스템 점검 중입니다.","몇 시간 후 다시 시도해주세요."],
+ar:["التبرعات غير متاحة","نظام الدفع قيد الصيانة أثناء نشر نظام جديد.","يرجى العودة بعد بضع ساعات."],
+sv:["Donationer otillgängliga","Betalningssystemet underhålls medan vi inför ett nytt.","Kom tillbaka om några timmar."]
+}
+
+function setLang(l){
+document.getElementById("title").textContent=t[l][0]
+document.getElementById("line1").textContent=t[l][1]
+document.getElementById("line2").textContent=t[l][2]
+document.getElementById("lang").value=l
+localStorage.setItem("lang",l)
+}
+
+function detectLang(){
+let langs=navigator.languages||[navigator.language]
+for(let lang of langs){
+let l=lang.slice(0,2)
+if(t[l]) return l
+}
+return "en"
+}
+
+function populate(){
+let s=document.getElementById("lang")
+for(let k in t){
+let o=document.createElement("option")
+o.value=k
+o.textContent=k.toUpperCase()
+s.appendChild(o)
+}
+}
+
+function toggleTheme(){
+document.body.classList.toggle("dark")
+document.body.classList.toggle("light")
+}
+
+populate()
+setLang(localStorage.getItem("lang")||detectLang())
+</script>
+</body>
+</html>
